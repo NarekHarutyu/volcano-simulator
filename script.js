@@ -663,11 +663,13 @@
   function drawLabels() {
     const cx = layout.chamberCenterX;
 
-    // Mantle melting (lower-left, points into mantle)
+    // Mantle melting (lower-left, points into mantle).
+    // Use "left" alignment so the pill sits to the left of x and the
+    // leader line starts at the pill's right edge, heading outward.
     drawLabel("Mantle melting",
-      W * 0.05, layout.crustBottom + (layout.mantleBottom - layout.crustBottom) * 0.55,
-      W * 0.18, layout.crustBottom + (layout.mantleBottom - layout.crustBottom) * 0.55,
-      "right");
+      W * 0.17, layout.crustBottom + (layout.mantleBottom - layout.crustBottom) * 0.55,
+      W * 0.24, layout.crustBottom + (layout.mantleBottom - layout.crustBottom) * 0.55,
+      "left");
 
     // Magma chamber (right of chamber)
     drawLabel("Magma chamber",
@@ -677,9 +679,9 @@
 
     // Crust (upper-left, points into crust)
     drawLabel("Crust",
-      W * 0.05, layout.surfaceY + (layout.crustBottom - layout.surfaceY) * 0.4,
-      W * 0.20, layout.surfaceY + (layout.crustBottom - layout.surfaceY) * 0.4,
-      "right");
+      W * 0.12, layout.surfaceY + (layout.crustBottom - layout.surfaceY) * 0.4,
+      W * 0.22, layout.surfaceY + (layout.crustBottom - layout.surfaceY) * 0.4,
+      "left");
 
     // Magma conduit (left of conduit)
     drawLabel("Magma conduit",
