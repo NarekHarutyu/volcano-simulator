@@ -175,27 +175,39 @@
       "#a04a2e", "#4d1c12", "#7a3424"
     ];
     const color = palette[state.cone.layers.length % palette.length];
-    const height = 4 + Math.random() * 2.4;
 
-    // New layer is slightly narrower than the current top of the cone.
+    // Stop growing the cone once it gets close to the top of the canvas
+    // — keeps the silhouette tasteful and prevents clipping.
+    const heightCap = layout.surfaceY - H * 0.13;
+    const currentHeight = layout.surfaceY - state.cone.peakY;
+    const headroom = Math.max(0, heightCap - currentHeight);
+    // Layers get shorter as we approach the cap so the cone "settles".
+    const layerHeight = Math.min(3 + Math.random() * 1.5, headroom);
+
+    // New layer is slightly narrower than the previous top, but the
+    // shrinkage is proportional — when the top is already small, we stop
+    // shrinking aggressively. Also enforce a minimum width so the crater
+    // always covers the conduit.
     const prevTopHalf = state.cone.layers.length > 0
       ? state.cone.layers[state.cone.layers.length - 1].halfWidth
       : state.cone.baseHalfWidth;
-    const halfWidth = Math.max(7, prevTopHalf - (1.5 + Math.random() * 2.5));
+    const minTop = layout.conduitWidth / 2 + 5; // ensures conduit stays hidden
+    const shrink = Math.max(0.4, prevTopHalf * 0.035 + Math.random() * 0.8);
+    const halfWidth = Math.max(minTop, prevTopHalf - shrink);
 
     state.cone.layers.push({
       halfWidth,
-      height,
+      height: layerHeight,
       color,
       age: 0
     });
-    state.cone.peakY -= height;
+    state.cone.peakY -= layerHeight;
 
-    // Push the conduit's top up so the crater follows the cone peak.
-    layout.conduitTopY = state.cone.peakY + 6;
+    // Conduit ends 4px below the new peak so the cone fully covers it.
+    layout.conduitTopY = state.cone.peakY + 4;
 
-    // Slight base widening too — repeated flows broaden the volcano.
-    state.cone.baseHalfWidth += 0.6;
+    // Widen the base meaningfully so a tall cone keeps natural proportions.
+    state.cone.baseHalfWidth += 1.4 + Math.random() * 0.6;
   }
 
   function triggerEruption() {
@@ -573,20 +585,45 @@
   }
 
   function drawLavaFlows() {
+    // Render each flow as a single smooth stroked path so it reads as a
+    // continuous lava rivulet instead of a chain of dots. We split the
+    // trail into "hot" (recent) and "cool" (older) segments so the head
+    // glows and the tail darkens.
     for (const f of state.lavaFlows) {
-      // Draw the trail as a soft polyline that fades with age.
-      for (let i = 0; i < f.points.length; i++) {
-        const pt = f.points[i];
-        const a = clamp(1 - pt.age / 180, 0, 1);
-        const heat = clamp(1 - pt.age / 80, 0, 1);
-        const color = heat > 0.3
-          ? `rgba(255, ${Math.round(120 + heat * 100)}, 60, ${a})`
-          : `rgba(120, 50, 30, ${a})`;
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, f.width * (0.6 + heat * 0.4), 0, Math.PI * 2);
-        ctx.fill();
+      if (f.points.length < 2) continue;
+
+      // Cool tail (drawn first, behind the hot head).
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.strokeStyle = "rgba(110, 45, 28, 0.85)";
+      ctx.lineWidth = f.width;
+      ctx.beginPath();
+      ctx.moveTo(f.points[0].x, f.points[0].y);
+      for (let i = 1; i < f.points.length; i++) {
+        ctx.lineTo(f.points[i].x, f.points[i].y);
       }
+      ctx.stroke();
+
+      // Hot head — only the most recent points still glow.
+      const headStart = Math.max(0, f.points.length - 18);
+      ctx.strokeStyle = "rgba(255, 170, 70, 0.95)";
+      ctx.lineWidth = f.width * 0.85;
+      ctx.beginPath();
+      ctx.moveTo(f.points[headStart].x, f.points[headStart].y);
+      for (let i = headStart + 1; i < f.points.length; i++) {
+        ctx.lineTo(f.points[i].x, f.points[i].y);
+      }
+      ctx.stroke();
+
+      // Bright glowing core at the very tip.
+      const tip = f.points[f.points.length - 1];
+      const glow = ctx.createRadialGradient(tip.x, tip.y, 1, tip.x, tip.y, f.width * 1.6);
+      glow.addColorStop(0, "rgba(255, 230, 150, 0.9)");
+      glow.addColorStop(1, "rgba(255, 120, 50, 0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(tip.x, tip.y, f.width * 1.6, 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
