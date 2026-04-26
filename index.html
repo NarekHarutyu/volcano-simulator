@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volcano Formation: From Mantle Melting to Lava Layers</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-text">EEPS 0010 · Talent Showcase</span>
+    </div>
+    <h1 class="title">Volcano Formation: From Mantle Melting to Lava Layers</h1>
+    <p class="subtitle">An interactive cross-section of Earth showing how repeated eruptions build a volcano cone over time.</p>
+  </header>
+
+  <main class="layout">
+    <!-- Simulation stage -->
+    <section class="stage card">
+      <div class="canvas-wrap">
+        <canvas id="scene" width="1100" height="640" aria-label="Volcano cross-section simulation"></canvas>
+        <div class="status-pill" id="statusPill">Mantle melting produces magma</div>
+      </div>
+
+      <div class="controls">
+        <button id="playBtn" class="btn btn-primary" aria-label="Start or pause the simulation">
+          <span class="btn-icon" id="playIcon">▶</span>
+          <span id="playLabel">Start</span>
+        </button>
+        <button id="resetBtn" class="btn btn-ghost" aria-label="Reset the simulation">
+          <span class="btn-icon">↺</span>
+          <span>Reset</span>
+        </button>
+
+        <div class="slider-group" title="Higher pressure speeds magma rise, increases eruption frequency, and grows the cone faster.">
+          <label for="pressure">
+            Magma Pressure
+            <span id="pressureValue" class="slider-value">50%</span>
+          </label>
+          <input id="pressure" type="range" min="10" max="100" value="50" />
+          <div class="slider-track-marks">
+            <span>Low</span>
+            <span>Medium</span>
+            <span>High</span>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="metric-label">Eruptions</div>
+            <div class="metric-value" id="eruptionCount">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Lava Layers</div>
+            <div class="metric-value" id="layerCount">0</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Cone Height</div>
+            <div class="metric-value" id="coneHeight">0 m</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Side panel -->
+    <aside class="side">
+      <section class="card panel">
+        <h2 class="panel-title">How a Volcano Forms</h2>
+        <p class="panel-text">
+          This simulation shows how a volcano can form through mantle melting and repeated eruptions.
+          Heat inside Earth melts mantle rock, creating magma. Because magma is hot and less dense than
+          surrounding rock, it rises into a magma chamber beneath the crust. As pressure builds, magma
+          travels through a conduit and erupts at the surface. Each eruption deposits lava that cools
+          into a new layer, gradually building the volcano cone over time.
+        </p>
+      </section>
+
+      <section class="card panel">
+        <h2 class="panel-title">Step Through the Process</h2>
+        <ol class="steps" id="steps">
+          <li data-step="0">
+            <span class="step-marker"></span>
+            <div>
+              <strong>Mantle melting</strong>
+              <p>Heat and pressure deep inside Earth melt mantle rock into magma.</p>
+            </div>
+          </li>
+          <li data-step="1">
+            <span class="step-marker"></span>
+            <div>
+              <strong>Magma rises</strong>
+              <p>Hot, less-dense magma rises buoyantly through the crust.</p>
+            </div>
+          </li>
+          <li data-step="2">
+            <span class="step-marker"></span>
+            <div>
+              <strong>Pressure builds</strong>
+              <p>Magma collects in a chamber. Pressure climbs until it forces upward.</p>
+            </div>
+          </li>
+          <li data-step="3">
+            <span class="step-marker"></span>
+            <div>
+              <strong>Eruption</strong>
+              <p>Magma travels up the conduit and erupts as lava and ash.</p>
+            </div>
+          </li>
+          <li data-step="4">
+            <span class="step-marker"></span>
+            <div>
+              <strong>Lava layers cool</strong>
+              <p>Each flow cools into a new layer, slowly building the cone.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section class="card panel legend">
+        <h2 class="panel-title">Legend</h2>
+        <ul>
+          <li><span class="dot dot-sky"></span> Sky &amp; atmosphere</li>
+          <li><span class="dot dot-crust"></span> Crust</li>
+          <li><span class="dot dot-mantle"></span> Mantle</li>
+          <li><span class="dot dot-magma"></span> Magma</li>
+          <li><span class="dot dot-lava"></span> Cooling lava layers</li>
+          <li><span class="dot dot-ash"></span> Ash &amp; eruption particles</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="foot">
+    <span>Built for EEPS Talent Showcase · Narek Harutyunyan</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
